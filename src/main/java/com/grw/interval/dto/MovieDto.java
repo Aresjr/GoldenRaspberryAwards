@@ -1,38 +1,28 @@
 package com.grw.interval.dto;
 
 import com.grw.interval.model.Movie;
-import com.grw.interval.model.Producer;
-import com.grw.interval.model.Studio;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.util.Arrays;
 import java.util.List;
 
+@AllArgsConstructor
 @Getter
+@NoArgsConstructor
 public class MovieDto {
 
-    public MovieDto() {}
-
-    public MovieDto(Integer year, String title, String studio, String producer, Boolean winner) {
-        this.year = year;
-        this.title = title;
-        this.studio = studio;
-        this.producer = producer;
-        this.winner = winner;
-    }
-
-    private Integer year;
-    private String title;
-    private String studio;
-    private String producer;
-    private Boolean winner;
+    Integer year;
+    String title;
+    List<StudioDto> studios;
+    List<ProducerDto> producers;
+    Boolean winner;
 
     public Movie toModel() {
-        List<Studio> studios = Arrays.stream(studio.split(", ")).map(Studio::new).toList();
-        List<Producer> producers = Arrays.stream(producer.contains(", ")
-                ? producer.split(", ")
-                : producer.split(" and ")).map(Producer::new).toList();
-        return new Movie(year, title, studios, producers, winner);
+        return new Movie(year, title,
+                studios.stream().map(StudioDto::toModel).toList(),
+                producers.stream().map(ProducerDto::toModel).toList(),
+                winner);
     }
 
 }

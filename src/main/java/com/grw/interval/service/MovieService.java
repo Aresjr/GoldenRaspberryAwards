@@ -4,6 +4,8 @@ import com.grw.interval.dto.MovieDto;
 import com.grw.interval.exception.MovieImportException;
 import com.grw.interval.model.Movie;
 import com.grw.interval.repository.MovieRepository;
+import com.grw.interval.repository.ProducerRepository;
+import com.grw.interval.repository.StudioRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,7 +19,7 @@ public class MovieService {
 
     private final MovieRepository movieRepository;
 
-    public MovieService(FileService fileService, MovieRepository movieRepository) {
+    public MovieService(FileService fileService, MovieRepository movieRepository, ProducerRepository producerRepository, StudioRepository studioRepository) {
         this.fileService = fileService;
         this.movieRepository = movieRepository;
     }
@@ -26,12 +28,17 @@ public class MovieService {
         List<MovieDto> movieDtos = fileService.getMoviesFromCsv();
         List<Movie> movies = new ArrayList<>();
 
-        movieDtos.forEach(movieDto -> {
-            //TODO - CHECK IF MOVIE/PRODUCER/STUDIO ALREADY EXISTS
-            movies.add(movieRepository.save(movieDto.toModel()));
-        });
+        movieDtos.forEach(movieDto -> movies.add(save(movieDto)));
 
         return movies;
+    }
+
+    public Movie save(Movie movie) {
+        return movieRepository.save(movie);
+    }
+
+    public Movie save(MovieDto movieDto) {
+        return save(movieDto.toModel());
     }
 
     public Optional<Movie> getMovieById(Long id) {
@@ -44,10 +51,6 @@ public class MovieService {
 
     public void deleteMovieById(Long id) {
         movieRepository.deleteById(id);
-    }
-
-    public Movie saveMovie(MovieDto movieDto) {
-        return movieRepository.save(movieDto.toModel());
     }
 
 }

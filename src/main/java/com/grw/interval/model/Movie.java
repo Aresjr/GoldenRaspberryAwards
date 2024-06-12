@@ -3,6 +3,7 @@ package com.grw.interval.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
+@Setter
 @Table(name = "movie")
 @ToString
 public class Movie {
@@ -23,15 +25,19 @@ public class Movie {
     @Column(name = "_year")
     Integer year;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "movie_id")
-    List<Studio> studios;
+    Boolean winner;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "movie_id")
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "movie_producer",
+      joinColumns = @JoinColumn(name = "movie_id"),
+      inverseJoinColumns = @JoinColumn(name = "producer_id"))
     List<Producer> producers;
 
-    Boolean winner;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "movie_studio",
+      joinColumns = @JoinColumn(name = "movie_id"),
+      inverseJoinColumns = @JoinColumn(name = "studio_id"))
+    List<Studio> studios;
 
     public Movie(Integer year, String title, List<Studio> studios, List<Producer> producers, Boolean winner) {
         this.year = year;

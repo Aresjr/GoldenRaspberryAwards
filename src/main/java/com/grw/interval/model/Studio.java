@@ -1,13 +1,16 @@
 package com.grw.interval.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@Setter
 @Table(name = "studio")
 public class Studio {
 
@@ -17,10 +20,11 @@ public class Studio {
 
     String name;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "movie_id")
-    @JsonIgnore
-    Movie movie;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "movie_studio",
+      joinColumns = @JoinColumn(name = "studio_id"),
+      inverseJoinColumns = @JoinColumn(name = "movie_id"))
+    List<Movie> movies;
 
     public Studio(String name) {
         this.name = name;

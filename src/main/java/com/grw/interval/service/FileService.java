@@ -1,6 +1,8 @@
 package com.grw.interval.service;
 
 import com.grw.interval.dto.MovieDto;
+import com.grw.interval.dto.ProducerDto;
+import com.grw.interval.dto.StudioDto;
 import com.grw.interval.exception.MovieImportException;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -12,6 +14,7 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -22,7 +25,7 @@ public class FileService {
 
     private static final String[] MOVIE_HEADERS = {"year", "title", "studios", "producers", "winner"};
 
-    private final static Character DELIMITER = ';';
+    private final static Character CSV_DELIMITER = ';';
 
     public List<MovieDto> getMoviesFromCsv() throws MovieImportException {
         List<MovieDto> movies = new ArrayList<>();
@@ -31,7 +34,7 @@ public class FileService {
         try {
             Reader in = Files.newBufferedReader(Paths.get(csvFilePath));
             CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
-                .setDelimiter(DELIMITER)
+                .setDelimiter(CSV_DELIMITER)
                 .setHeader(MOVIE_HEADERS)
                 .setSkipHeaderRecord(true)
                 .build();
@@ -56,7 +59,15 @@ public class FileService {
     private static MovieDto getMovieFromRecord(CSVRecord record) throws MovieImportException {
         Integer year = getYearFromRecord(record);
         Boolean winner = isWinnerFromRecord(record);
-        return new MovieDto(year, record.get("title"), record.get("producers"), record.get("producers"), winner);
+
+        List<StudioDto> studios = Arrays.stream(record.get("studios").split(", ")).map(StudioDto::new).toList();
+        String producersRecord = record.get("producers");
+
+        List<ProducerDto> producers = Arrays.stream(producersRecord.contains(", ")
+                ? producersRecord.split(", ")
+                : producersRecord.split(" and ")).map(ProducerDto::new).toList();
+
+        return new MovieDto(year, record.get("title"), studios, producers, winner);
     }
 
     private static Integer getYearFromRecord(CSVRecord record) throws MovieImportException {
