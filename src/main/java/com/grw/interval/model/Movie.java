@@ -2,13 +2,13 @@ package com.grw.interval.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor
 @Table(name = "movie")
 public class Movie {
 
@@ -21,19 +21,21 @@ public class Movie {
     @Column(name = "_year")
     Integer year;
 
-    @OneToMany(mappedBy="id")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "movie_id")
     List<Studio> studios;
 
-    @OneToMany(mappedBy="id")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "movie_id")
     List<Producer> producers;
 
-    Boolean winnerOfYear;
+    Boolean winner;
 
     public Movie(Integer year, String title, List<Studio> studios, List<Producer> producers, Boolean winner) {
         this.year = year;
         this.title = title;
         this.studios = studios;
         this.producers = producers;
-        this.winnerOfYear = winner;
+        this.winner = winner;
     }
 }

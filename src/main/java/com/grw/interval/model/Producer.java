@@ -2,11 +2,11 @@ package com.grw.interval.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor
 @Table(name = "producer")
 public class Producer {
 
@@ -15,6 +15,10 @@ public class Producer {
     Long id;
 
     String name;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "movie_id")
+    Movie movie;
 
     public Producer(String name) {
         this.name = name;
