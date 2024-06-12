@@ -1,46 +1,36 @@
-# GoldenRaspberryAwards
-### Restful API to check Worst Movie and the producer's winning interval
+# Golden Raspberry Awards
+Restful API to list movies and the producer's winning interval at the Golden Raspberry Awards
 
-#### Input example (from csv file):
-```
-year;title;studios;producers;winner
-1980;Can't Stop the Music;Associated Film Distribution;Allan Carr;yes
-1980;Cruising;Lorimar Productions, United Artists;Jerry Weintraub;
-1980;The Formula;MGM, United Artists;Steve Shagan;
-1980;Friday the 13th;Paramount Pictures;Sean S. Cunningham;
-```
+## Project Specs
+<b>
+Spring Boot 3.3.0<br>
+Java 17<br>
+Maven 3.8.7
+</b>
 
-#### Output example:
-```json
-{
-  "min": [
-    {
-      "producer": "Producer 1",
-      "interval": 1,
-      "previousWin": 2008,
-      "followingWin": 2009
-    },
-    {
-      "producer": "Producer 2",
-      "interval": 1,
-      "previousWin": 2018,
-      "followingWin": 2019
-    }
-  ],
-  "max": [
-    {
-      "producer": "Producer 1",
-      "interval": 99,
-      "previousWin": 1900,
-      "followingWin": 1999
-    },
-    {
-      "producer": "Producer 2",
-      "interval": 99,
-      "previousWin": 2000,
-      "followingWin": 2099
-    }
-  ]
-}
+-----
+## Run project
+<b>LINUX / macOS</b>
+```bash
+./mvnw spring-boot:run
 ```
+<b>WINDOWS</b>
+```bash
+mvnw.cmd spring-boot:run
+```
+-----
+## CSV Import
+When the application starts, it will look for a file named ```movielist.csv``` in the root of the application to import
+the movies into the H2 memory database.
+The application will keep running on port 8080 and the database can be queried in the following path:
+```
+http://localhost:8080/h2-console
+```
+-----
+## Endpoints
 
+All the endpoints can be found at the application swagger at:
+```dtd
+http://localhost:8080/swagger-ui/index.html
+```
+-----

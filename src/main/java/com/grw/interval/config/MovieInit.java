@@ -1,5 +1,6 @@
-package com.grw.interval.service;
+package com.grw.interval.config;
 
+import com.grw.interval.service.MovieService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
