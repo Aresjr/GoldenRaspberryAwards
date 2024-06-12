@@ -3,7 +3,7 @@
 
 #### Input example (from csv file):
 ```
-year;title;studios;producers;winner</br>
+year;title;studios;producers;winner
 1980;Can't Stop the Music;Associated Film Distribution;Allan Carr;yes
 1980;Cruising;Lorimar Productions, United Artists;Jerry Weintraub;
 1980;The Formula;MGM, United Artists;Steve Shagan;
