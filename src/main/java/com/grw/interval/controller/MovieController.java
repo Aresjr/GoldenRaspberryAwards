@@ -1,16 +1,15 @@
 package com.grw.interval.controller;
 
+import com.grw.interval.dto.MovieDto;
+import com.grw.interval.exception.MovieImportException;
 import com.grw.interval.model.Movie;
 import com.grw.interval.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -21,8 +20,21 @@ public class MovieController {
 
 	@ResponseStatus(HttpStatus.CREATED)
 	@GetMapping("movie/import-from-csv")
-	public List<Movie> importToDatabase() throws IOException {
-		return movieService.importToDatabase();
+	public ResponseEntity<String> importToDatabase() {
+        try {
+			List<Movie> importedMovies = movieService.importToDatabase();
+			String response = "Imported " + importedMovies.size() + " movies. List: " + importedMovies;
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (MovieImportException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+	@ResponseStatus(HttpStatus.OK)
+	@GetMapping("movies")
+	public ResponseEntity<List<Movie>> getMovies() {
+		List<Movie> response = movieService.getAllMovies();
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	@ResponseStatus(HttpStatus.OK)
@@ -31,6 +43,22 @@ public class MovieController {
 		Movie response = movieService.getMovieById(id)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found"));
 		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+
+	@ResponseStatus(HttpStatus.OK)
+	@DeleteMapping("movie/{id}")
+	public ResponseEntity<String> deleteMovieById(Long id) {
+		Movie response = movieService.getMovieById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found"));
+		movieService.deleteMovieById(id);
+		return ResponseEntity.status(HttpStatus.OK).body("Movie deleted: " + response);
+	}
+
+	@ResponseStatus(HttpStatus.OK)
+	@PostMapping("movie")
+	public ResponseEntity<Movie> addMovie(@RequestBody MovieDto movieDto) {
+		Movie movie = movieService.saveMovie(movieDto);
+		return ResponseEntity.status(HttpStatus.OK).body(movie);
 	}
 
 }

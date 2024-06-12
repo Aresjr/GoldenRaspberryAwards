@@ -1,8 +1,7 @@
 package com.grw.interval.service;
 
-import com.grw.interval.model.Movie;
-import com.grw.interval.model.Producer;
-import com.grw.interval.model.Studio;
+import com.grw.interval.dto.MovieDto;
+import com.grw.interval.exception.MovieImportException;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +12,6 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -26,17 +24,22 @@ public class FileService {
 
     private final static Character DELIMITER = ';';
 
-    public List<Movie> getMoviesFromCsv() throws IOException {
-        List<Movie> movies = new ArrayList<>();
+    public List<MovieDto> getMoviesFromCsv() throws MovieImportException {
+        List<MovieDto> movies = new ArrayList<>();
+        Iterable<CSVRecord> records;
 
-        Reader in = Files.newBufferedReader(Paths.get(csvFilePath));
-        CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
-            .setDelimiter(DELIMITER)
-            .setHeader(MOVIE_HEADERS)
-            .setSkipHeaderRecord(true)
-            .build();
+        try {
+            Reader in = Files.newBufferedReader(Paths.get(csvFilePath));
+            CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
+                .setDelimiter(DELIMITER)
+                .setHeader(MOVIE_HEADERS)
+                .setSkipHeaderRecord(true)
+                .build();
 
-        Iterable<CSVRecord> records = csvFormat.parse(in);
+            records = csvFormat.parse(in);
+        } catch (IOException e) {
+            throw new MovieImportException("Unable to read CSV file: " + csvFilePath);
+        }
 
         System.out.println("START - PARSING CSV FILE");
         int count = 0;
@@ -50,24 +53,26 @@ public class FileService {
         return movies;
     }
 
-    private static Movie getMovieFromRecord(CSVRecord record) {
-        Integer year = Integer.parseInt(record.get("year"));
-        String title = record.get("title");
-        List<Studio> studios = getStudiosFromRecord(record);
-        List<Producer> producers = getProducersFromRecord(record);
-        Boolean winner = "yes".equalsIgnoreCase(record.get("winner"));
-        return new Movie(year, title, studios, producers, winner);
+    private static MovieDto getMovieFromRecord(CSVRecord record) throws MovieImportException {
+        Integer year = getYearFromRecord(record);
+        Boolean winner = isWinnerFromRecord(record);
+        return new MovieDto(year, record.get("title"), record.get("producers"), record.get("producers"), winner);
     }
 
-    private static List<Studio> getStudiosFromRecord(CSVRecord record) {
-        return Arrays.stream(record.get("studios").split(", ")).map(Studio::new).toList();
+    private static Integer getYearFromRecord(CSVRecord record) throws MovieImportException {
+        try {
+            return Integer.parseInt(record.get("year"));
+        } catch (NumberFormatException e) {
+            throw new MovieImportException("Invalid year: " + record.get("year"));
+        }
     }
 
-    private static List<Producer> getProducersFromRecord(CSVRecord record) {
-        String producers = record.get("producers");
-        return Arrays.stream(producers.contains(", ")
-                ? producers.split(", ")
-                : producers.split(" and ")).map(Producer::new).toList();
+    private static Boolean isWinnerFromRecord(CSVRecord record) throws MovieImportException {
+        String winner = record.get("winner");
+        if (!winner.isEmpty() && !winner.equals("yes")) {
+            throw new MovieImportException("Invalid winner field: " + winner);
+        }
+        return "yes".equalsIgnoreCase(winner);
     }
 
 }

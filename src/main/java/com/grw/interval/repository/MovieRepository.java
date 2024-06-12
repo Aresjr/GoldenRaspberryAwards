@@ -9,4 +9,6 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     Optional<Movie> findById(Long id);
 
+    void deleteById(Long id);
+
 }
