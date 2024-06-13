@@ -15,7 +15,7 @@ public class MovieInit {
     @PostConstruct
     public void initMovies()  {
         try {
-            movieService.importToDatabase();
+            movieService.importCsvToDatabase();
         } catch (MovieImportException e) {
             System.out.println("NOT ABLE TO IMPORT MOVIES TO DATABASE: " + e.getMessage());
         }

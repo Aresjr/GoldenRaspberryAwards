@@ -27,13 +27,13 @@ public class Movie {
 
     Boolean winner;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "movie_producer",
       joinColumns = @JoinColumn(name = "movie_id"),
       inverseJoinColumns = @JoinColumn(name = "producer_id"))
     List<Producer> producers;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "movie_studio",
       joinColumns = @JoinColumn(name = "movie_id"),
       inverseJoinColumns = @JoinColumn(name = "studio_id"))
@@ -46,4 +46,5 @@ public class Movie {
         this.producers = producers;
         this.winner = winner;
     }
+
 }

@@ -20,7 +20,7 @@ public class Studio {
 
     String name;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(name = "movie_studio",
       joinColumns = @JoinColumn(name = "studio_id"),
       inverseJoinColumns = @JoinColumn(name = "movie_id"))

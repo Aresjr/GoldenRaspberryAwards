@@ -13,16 +13,27 @@ import java.util.List;
 public class MovieDto {
 
     Integer year;
+
     String title;
+
     List<StudioDto> studios;
+
     List<ProducerDto> producers;
+
     Boolean winner;
 
     public Movie toModel() {
-        return new Movie(year, title,
-                studios.stream().map(StudioDto::toModel).toList(),
-                producers.stream().map(ProducerDto::toModel).toList(),
-                winner);
+        return new Movie(year, title, List.of(), List.of(), winner);
+    }
+
+    public MovieDto(Movie movie) {
+        this.year = movie.getYear();
+        this.title = movie.getTitle();
+        this.studios = movie.getStudios().stream()
+                .map(studioDto -> new StudioDto(studioDto.getName())).toList();
+        this.producers = movie.getProducers().stream()
+                .map(producerDto -> new ProducerDto(producerDto.getName())).toList();
+        this.winner = movie.getWinner();
     }
 
 }

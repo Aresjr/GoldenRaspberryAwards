@@ -10,4 +10,6 @@ public interface ProducerRepository extends JpaRepository<Producer, Long> {
     Optional<Producer> findById(Long id);
 
     void deleteById(Long id);
+
+    Optional<Producer> findByName(String name);
 }

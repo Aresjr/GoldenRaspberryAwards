@@ -61,13 +61,31 @@ public class FileService {
         Boolean winner = isWinnerFromRecord(record);
 
         List<StudioDto> studios = Arrays.stream(record.get("studios").split(", ")).map(StudioDto::new).toList();
-        String producersRecord = record.get("producers");
-
-        List<ProducerDto> producers = Arrays.stream(producersRecord.contains(", ")
-                ? producersRecord.split(", ")
-                : producersRecord.split(" and ")).map(ProducerDto::new).toList();
+        List<ProducerDto> producers =
+                getProducersFromRecord(record.get("producers")).stream().map(ProducerDto::new).toList();
 
         return new MovieDto(year, record.get("title"), studios, producers, winner);
+    }
+
+    private static List<String> getProducersFromRecord(String producersRecord) {
+        List<String> producers;
+        if (producersRecord.contains(", ")) {
+            producers = new ArrayList<>(Arrays.asList(producersRecord.split(", ")));
+
+            String lastProducerName = producers.get(producers.size()-1);
+            if (lastProducerName.startsWith("and ")) {
+                producers.remove(producers.size()-1);
+                producers.add(lastProducerName.replace("and ", ""));
+            }
+
+            if (lastProducerName.contains(" and ")) {
+                producers.remove(producers.size()-1);
+                producers.addAll(Arrays.stream(lastProducerName.split(" and ")).toList());
+            }
+        } else {
+            producers = new ArrayList<>(Arrays.asList(producersRecord.split(" and ")));
+        }
+        return producers;
     }
 
     private static Integer getYearFromRecord(CSVRecord record) throws MovieImportException {
