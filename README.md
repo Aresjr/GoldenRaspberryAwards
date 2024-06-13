@@ -10,11 +10,11 @@ Maven 3.8.7
 
 -----
 ## Run project
-<b>LINUX / macOS</b>
+**LINUX / macOS**
 ```bash
 ./mvnw spring-boot:run
 ```
-<b>WINDOWS</b>
+**WINDOWS**
 ```bash
 mvnw.cmd spring-boot:run
 ```
@@ -26,6 +26,9 @@ The application will keep running on port 8080 and the database can be queried i
 ```
 http://localhost:8080/h2-console
 ```
+**Producers** and **Studios** duplicates are not allowed,
+this takes more time to import the payload but increases the overall consistency.
+
 -----
 ## Endpoints
 
@@ -33,4 +36,10 @@ All the endpoints can be found at the application swagger at:
 ```dtd
 http://localhost:8080/swagger-ui/index.html
 ```
+
+### Endpoint to check the award interval (min and max)
+```dtd
+http://localhost:8080/award/intervals
+```
+
 -----
