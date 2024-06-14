@@ -37,9 +37,14 @@ class MovieServiceTest {
 	@Test
 	void importCsvRecordsToDatabase() {
 		Assertions.assertDoesNotThrow(() -> movieService.importCsvToDatabase());
+
 		Assertions.assertEquals(206, movieRepository.count());
 		Assertions.assertEquals(59, studioRepository.count());
 		Assertions.assertEquals(359, producerRepository.count());
+		Assertions.assertEquals(19, studioRepository.getOneByName("20th Century Fox")
+				.orElseThrow(() -> new AssertionError("Studio not found")).getMovies().size());
+		Assertions.assertEquals(3, producerRepository.getOneByName("Michael Bay")
+				.orElseThrow(() -> new AssertionError("Producer not found")).getMovies().size());
 	}
 
 	@Test
@@ -58,8 +63,13 @@ class MovieServiceTest {
 	void importCsvWithInvalidInputRecordsToDatabase() {
 		movieService.setCsvFilePath("movielist-invalid.csv");
 		Assertions.assertDoesNotThrow(() -> movieService.importCsvToDatabase());
+
 		Assertions.assertEquals(14, movieRepository.count());
 		Assertions.assertEquals(6, studioRepository.count());
 		Assertions.assertEquals(14, producerRepository.count());
+		Assertions.assertEquals(3, studioRepository.getOneByName("MGM")
+				.orElseThrow(() -> new AssertionError("Studio not found")).getMovies().size());
+		Assertions.assertEquals(1, producerRepository.getOneByName("John Derek")
+				.orElseThrow(() -> new AssertionError("Producer not found")).getMovies().size());
 	}
 }

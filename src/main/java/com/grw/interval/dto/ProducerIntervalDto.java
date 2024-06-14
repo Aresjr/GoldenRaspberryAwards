@@ -1,24 +1,15 @@
 package com.grw.interval.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@AllArgsConstructor
-@Getter
-@NoArgsConstructor
-public class ProducerIntervalDto {
+public interface ProducerIntervalDto {
 
-    String producer;
+    String getProducer();
 
-    Integer interval;
+    @JsonProperty("interval")
+    Integer getWinInterval();
 
-    Integer previousWin;
+    Integer getPreviousWin();
 
-    Integer followingWin;
-
-    public static ProducerIntervalDto fromQueryObject(Object[] object) {
-        return new ProducerIntervalDto((String) object[0],
-                (Integer) object[1], (Integer) object[2], (Integer) object[3]);
-    }
+    Integer getFollowingWin();
 }

@@ -14,5 +14,4 @@ public class AwardIntervalsDto {
     List<ProducerIntervalDto> min;
 
     List<ProducerIntervalDto> max;
-
 }

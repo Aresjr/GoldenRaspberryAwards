@@ -25,16 +25,14 @@ public class ProducerService {
     }
 
     public AwardIntervalsDto getAwardIntervals() {
+        List<ProducerIntervalDto> winnerIntervals = producerRepository.findWinnerIntervals();
 
-        List<Object[]> winnerIntervals = producerRepository.findWinnerIntervals();
         List<ProducerIntervalDto> minIntervals = winnerIntervals.stream()
-                .map(ProducerIntervalDto::fromQueryObject)
-                .min(Comparator.comparingInt(ProducerIntervalDto::getInterval))
+                .min(Comparator.comparingInt(ProducerIntervalDto::getWinInterval))
                 .stream().toList();
 
         List<ProducerIntervalDto> maxIntervals = winnerIntervals.stream()
-                .map(ProducerIntervalDto::fromQueryObject)
-                .max(Comparator.comparingInt(ProducerIntervalDto::getInterval))
+                .max(Comparator.comparingInt(ProducerIntervalDto::getWinInterval))
                 .stream().toList();
 
         return new AwardIntervalsDto(minIntervals, maxIntervals);
