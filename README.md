@@ -23,8 +23,9 @@ the movies into the H2 memory database.<br>
 The application will keep running on port 8080 and the database can be queried in the following path:<br>
 http://localhost:8080/h2-console
 
-Producers and Studios names are unique so on CSV import it checks if it exists before inserting.<br>
+**Producers** and **Studios** names are unique so on CSV import it checks if it exists before inserting.<br>
 This takes more time to import but increases the consistency in the award interval endpoint.
+
 -----
 ## Endpoints
 
