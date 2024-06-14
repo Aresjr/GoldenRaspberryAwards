@@ -1,13 +1,11 @@
 package com.grw.interval.service;
 
 import com.grw.interval.dto.MovieDto;
-import com.grw.interval.dto.StudioDto;
 import com.grw.interval.exception.MovieImportException;
 import com.grw.interval.model.Movie;
 import com.grw.interval.model.Producer;
 import com.grw.interval.model.Studio;
 import com.grw.interval.repository.MovieRepository;
-import com.grw.interval.repository.StudioRepository;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,12 +37,8 @@ public class MovieService {
         this.studioService = studioService;
     }
 
-    public Movie save(Movie movie) {
-        return movieRepository.save(movie);
-    }
-
-    public Movie save(MovieDto movieDto) {
-        Movie movie = save(movieDto.toModel());
+    public Movie saveProducersAndStudios(MovieDto movieDto) {
+        Movie movie = movieDto.toModel();
 
         List<Producer> producers = movieDto.getProducers().stream()
             .map(producerDto -> producerService.upsertProducer(producerDto).addMovie(movie)).toList();
@@ -54,8 +48,11 @@ public class MovieService {
 
         movie.setProducers(producers);
         movie.setStudios(studios);
-
         return movie;
+    }
+
+    public Movie save(MovieDto movieDto) {
+        return movieRepository.save(saveProducersAndStudios(movieDto));
     }
 
     public Optional<Movie> getMovieById(Long id) {
@@ -74,8 +71,8 @@ public class MovieService {
         List<MovieDto> movieDtos = fileService.getMoviesFromCsv(csvFilePath);
 
         List<Movie> movies = new ArrayList<>();
-        movieDtos.forEach(movieDto -> movies.add(save(movieDto)));
-        return movies;
+        movieDtos.forEach(movieDto -> movies.add(saveProducersAndStudios(movieDto)));
+        return movieRepository.saveAll(movies);
     }
 
 }

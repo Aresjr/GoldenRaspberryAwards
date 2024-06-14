@@ -1,5 +1,5 @@
 # Golden Raspberry Awards
-Restful API to list movies and the producer's winning interval at the Golden Raspberry Awards
+### Restful API to list movies and the producer's winning interval at the Golden Raspberry Awards
 
 ## Project Specs
 **Spring Boot 3.3.0<br>
@@ -27,13 +27,28 @@ http://localhost:8080/h2-console
 this takes more time to import the payload but increases the overall consistency
 in the award interval endpoint.
 
------
 ## Endpoints
 
-All the endpoints can be found at the application swagger at:
+All the endpoints can be found at the application **swagger** at:<br>
 http://localhost:8080/swagger-ui/index.html
 
 ### Endpoint to check the award interval (min and max)
 http://localhost:8080/award/intervals
 
+-----
+## Integration tests
+
+**LINUX / macOS**
+```bash
+./mvnw clean test
+```
+**WINDOWS**
+```bash
+mvnw.cmd clean test
+```
+Integration tests rely on the valid csv [movielist.csv](movielist.csv) for valid input tests and
+[movielist-invalid.csv](movielist-invalid.csv) to make the tests with invalid input,
+which has some invalid values for year and winner flag.<br>
+Invalid lines will not be imported, but it **will not affect the following movie imports**,
+valid lines will always be imported so the tests will rely on the number of imported movies. 
 -----

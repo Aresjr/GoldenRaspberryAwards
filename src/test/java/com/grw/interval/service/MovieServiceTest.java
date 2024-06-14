@@ -54,4 +54,12 @@ class MovieServiceTest {
 		Assertions.assertEquals(0, producerRepository.count());
 	}
 
+	@Test
+	void importCsvWithInvalidInputRecordsToDatabase() {
+		movieService.setCsvFilePath("movielist-invalid.csv");
+		Assertions.assertDoesNotThrow(() -> movieService.importCsvToDatabase());
+		Assertions.assertEquals(14, movieRepository.count());
+		Assertions.assertEquals(6, studioRepository.count());
+		Assertions.assertEquals(14, producerRepository.count());
+	}
 }

@@ -4,7 +4,6 @@ import com.grw.interval.dto.MovieDto;
 import com.grw.interval.dto.ProducerDto;
 import com.grw.interval.dto.StudioDto;
 import com.grw.interval.exception.MovieImportException;
-import com.grw.interval.model.Movie;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.stereotype.Service;
@@ -54,6 +53,7 @@ public class FileService {
             }
         }
         System.out.println("PARSED " + countValid + " VALID MOVIES");
+        System.out.println("PARSED " + countInvalid + " INVALID MOVIES");
         System.out.println("END - PARSING CSV FILE");
 
         return movies;
