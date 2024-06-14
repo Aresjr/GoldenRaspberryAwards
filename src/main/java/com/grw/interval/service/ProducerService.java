@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ProducerService {
@@ -27,13 +28,23 @@ public class ProducerService {
     public AwardIntervalsDto getAwardIntervals() {
         List<ProducerIntervalDto> winnerIntervals = producerRepository.findWinnerIntervals();
 
-        List<ProducerIntervalDto> minIntervals = winnerIntervals.stream()
-                .min(Comparator.comparingInt(ProducerIntervalDto::getWinInterval))
-                .stream().toList();
+        if (winnerIntervals.isEmpty()) {
+            return new AwardIntervalsDto(List.of(), List.of());
+        }
 
-        List<ProducerIntervalDto> maxIntervals = winnerIntervals.stream()
+        Integer minInterval = winnerIntervals.stream()
+                .min(Comparator.comparingInt(ProducerIntervalDto::getWinInterval))
+                .get().getWinInterval();
+        List<ProducerIntervalDto> minIntervals = winnerIntervals.stream()
+                .filter(producerIntervalDto -> Objects.equals(producerIntervalDto.getWinInterval(), minInterval))
+                .toList();
+
+        Integer maxInterval = winnerIntervals.stream()
                 .max(Comparator.comparingInt(ProducerIntervalDto::getWinInterval))
-                .stream().toList();
+                .get().getWinInterval();
+        List<ProducerIntervalDto> maxIntervals = winnerIntervals.stream()
+                .filter(producerIntervalDto -> Objects.equals(producerIntervalDto.getWinInterval(), maxInterval))
+                .toList();
 
         return new AwardIntervalsDto(minIntervals, maxIntervals);
     }

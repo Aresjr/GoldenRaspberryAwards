@@ -19,22 +19,23 @@ mvnw.cmd spring-boot:run
 -----
 ## CSV Import
 When the application starts, it will look for a file named ```movielist.csv``` in the root of the application to import
-the movies into the H2 memory database.
-The application will keep running on port 8080 and the database can be queried in the following path:
+the movies into the H2 memory database.<br>
+The application will keep running on port 8080 and the database can be queried in the following path:<br>
 http://localhost:8080/h2-console
 
-**Producers** and **Studios** duplicates are not allowed,
-this takes more time to import the payload but increases the overall consistency
-in the award interval endpoint.
-
+**Producers** and **Studios** names are unique so on CSV import
+it checks if it exists before inserting.<br>
+This takes more time to import but increases the consistency in the award interval endpoint.
+-----
 ## Endpoints
 
 All the endpoints can be found at the application **swagger** at:<br>
 http://localhost:8080/swagger-ui/index.html
 
 ### Endpoint to check the award interval (min and max)
+http://localhost:8080/swagger-ui/index.html#/award-controller/getAwardIntervals
+<br>or call it directly:<br>
 http://localhost:8080/award/intervals
-
 -----
 ## Integration tests
 
