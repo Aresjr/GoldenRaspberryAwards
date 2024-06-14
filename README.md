@@ -36,6 +36,7 @@ http://localhost:8080/swagger-ui/index.html
 http://localhost:8080/swagger-ui/index.html#/award-controller/getAwardIntervals
 <br>or call it directly:<br>
 http://localhost:8080/award/intervals
+
 -----
 ## Integration tests
 
@@ -51,5 +52,6 @@ Integration tests rely on the valid csv [movielist.csv](movielist.csv) for valid
 [movielist-invalid.csv](movielist-invalid.csv) to make the tests with invalid input,
 which has some invalid values for year and winner flag.<br>
 Invalid lines will not be imported, but it **will not affect the following movie imports**,
-valid lines will always be imported so the tests will rely on the number of imported movies. 
+valid lines will always be imported so the tests will rely on the number of imported movies.
+
 -----
