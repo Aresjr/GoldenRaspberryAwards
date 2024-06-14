@@ -50,7 +50,8 @@ mvnw.cmd clean test
 ```
 Integration tests rely on the valid csv [movielist.csv](movielist.csv) for valid input tests and
 [movielist-invalid.csv](movielist-invalid.csv) to make the tests with invalid input,
-which has some invalid values for year and winner flag.<br>
+which has some invalid values for year and winner flag.
+Other fields do not have validation for now since they are descriptive they can accept any string.<br>
 Invalid lines will not be imported, but it **will not affect the following movie imports**,
 valid lines will always be imported so the tests will rely on the number of imported movies.
 
