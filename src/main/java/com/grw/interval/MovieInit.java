@@ -1,4 +1,4 @@
-package com.grw.interval.config;
+package com.grw.interval;
 
 import com.grw.interval.exception.MovieImportException;
 import com.grw.interval.service.MovieService;
@@ -15,10 +15,14 @@ public class MovieInit {
     @PostConstruct
     public void initMovies()  {
         try {
-            movieService.importCsvToDatabase();
+            importMoviesFromCsv();
         } catch (MovieImportException e) {
             System.out.println("NOT ABLE TO IMPORT MOVIES TO DATABASE: " + e.getMessage());
         }
+    }
+
+    public void importMoviesFromCsv() throws MovieImportException {
+        movieService.importCsvToDatabase();
     }
 
 }

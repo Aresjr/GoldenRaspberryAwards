@@ -4,9 +4,9 @@ import com.grw.interval.dto.MovieDto;
 import com.grw.interval.dto.ProducerDto;
 import com.grw.interval.dto.StudioDto;
 import com.grw.interval.exception.MovieImportException;
+import com.grw.interval.model.Movie;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -20,14 +20,11 @@ import java.util.List;
 @Service
 public class FileService {
 
-	@Value("${csv.file.path}")
-	private String csvFilePath;
-
     private static final String[] MOVIE_HEADERS = {"year", "title", "studios", "producers", "winner"};
 
     private final static Character CSV_DELIMITER = ';';
 
-    public List<MovieDto> getMoviesFromCsv() throws MovieImportException {
+    public List<MovieDto> getMoviesFromCsv(String csvFilePath) throws MovieImportException {
         List<MovieDto> movies = new ArrayList<>();
         Iterable<CSVRecord> records;
 
@@ -45,20 +42,33 @@ public class FileService {
         }
 
         System.out.println("START - PARSING CSV FILE");
-        int count = 0;
+        int countValid = 0;
+        int countInvalid = 0;
         for (CSVRecord record : records) {
-            movies.add(getMovieFromRecord(record));
-            count++;
+            MovieDto movieDto = getMovieFromRecord(record);
+            if (movieDto != null) {
+                movies.add(movieDto);
+                countValid++;
+            } else {
+                countInvalid++;
+            }
         }
-        System.out.println("PARSED " + count + " MOVIES");
+        System.out.println("PARSED " + countValid + " VALID MOVIES");
         System.out.println("END - PARSING CSV FILE");
 
         return movies;
     }
 
     private static MovieDto getMovieFromRecord(CSVRecord record) throws MovieImportException {
-        Integer year = getYearFromRecord(record);
-        Boolean winner = isWinnerFromRecord(record);
+        Integer year;
+        Boolean winner;
+        try {
+            year = getYearFromRecord(record);
+            winner = isWinnerFromRecord(record);
+        } catch (MovieImportException e) {
+            System.out.println("IGNORING RECORD: " + e.getMessage());
+            return null;
+        }
 
         List<StudioDto> studios = Arrays.stream(record.get("studios").split(", ")).map(StudioDto::new).toList();
         List<ProducerDto> producers =

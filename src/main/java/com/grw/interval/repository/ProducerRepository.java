@@ -13,7 +13,7 @@ public interface ProducerRepository extends JpaRepository<Producer, Long> {
 
     void deleteById(Long id);
 
-    Optional<Producer> findByName(String name);
+    Optional<Producer> getOneByName(String name);
 
     @Query(value = """
             WITH cte AS (

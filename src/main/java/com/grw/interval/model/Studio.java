@@ -26,6 +26,15 @@ public class Studio {
       inverseJoinColumns = @JoinColumn(name = "movie_id"))
     List<Movie> movies;
 
+    public Studio addMovie(Movie movie) {
+        if (movies == null) {
+            movies = List.of(movie);
+        } else {
+            movies.add(movie);
+        }
+        return this;
+    }
+
     public Studio(String name) {
         this.name = name;
     }

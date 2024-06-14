@@ -18,6 +18,7 @@ public class Producer {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
+    @Column(unique = true)
     String name;
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
@@ -25,6 +26,15 @@ public class Producer {
       joinColumns = @JoinColumn(name = "producer_id"),
       inverseJoinColumns = @JoinColumn(name = "movie_id"))
     List<Movie> movies;
+
+    public Producer addMovie(Movie movie) {
+        if (movies == null) {
+            movies = List.of(movie);
+        } else {
+            movies.add(movie);
+        }
+        return this;
+    }
 
     public Producer(String name) {
         this.name = name;

@@ -1,13 +1,15 @@
 package com.grw.interval.service;
 
 import com.grw.interval.dto.MovieDto;
+import com.grw.interval.dto.StudioDto;
 import com.grw.interval.exception.MovieImportException;
 import com.grw.interval.model.Movie;
 import com.grw.interval.model.Producer;
 import com.grw.interval.model.Studio;
 import com.grw.interval.repository.MovieRepository;
-import com.grw.interval.repository.ProducerRepository;
 import com.grw.interval.repository.StudioRepository;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,19 +19,24 @@ import java.util.Optional;
 @Service
 public class MovieService {
 
+    @Setter
+    @Value("${csv.file.path}")
+	private String csvFilePath;
+
     private final FileService fileService;
 
     private final MovieRepository movieRepository;
 
-    private final ProducerRepository producerRepository;
+    private final ProducerService producerService;
 
-    private final StudioRepository studioRepository;
+    private final StudioService studioService;
 
-    public MovieService(FileService fileService, MovieRepository movieRepository, ProducerRepository producerRepository, StudioRepository studioRepository, ProducerRepository producerRepository1, StudioRepository studioRepository1) {
+    public MovieService(FileService fileService, MovieRepository movieRepository, ProducerService producerService,
+                        StudioService studioService) {
         this.fileService = fileService;
         this.movieRepository = movieRepository;
-        this.producerRepository = producerRepository1;
-        this.studioRepository = studioRepository1;
+        this.producerService = producerService;
+        this.studioService = studioService;
     }
 
     public Movie save(Movie movie) {
@@ -40,28 +47,10 @@ public class MovieService {
         Movie movie = save(movieDto.toModel());
 
         List<Producer> producers = movieDto.getProducers().stream()
-            .map(producerDto -> {
-                Producer producer = producerRepository.findByName(producerDto.getName())
-                        .orElse(producerDto.toModel());
-                if (producer.getMovies() == null) {
-                    producer.setMovies(List.of(movie));
-                } else {
-                    producer.getMovies().add(movie);
-                }
-                return producerRepository.save(producer);
-            }).toList();
+            .map(producerDto -> producerService.upsertProducer(producerDto).addMovie(movie)).toList();
 
         List<Studio> studios = movieDto.getStudios().stream()
-            .map(studioDto -> {
-                Studio studio = studioRepository.findByName(studioDto.getName())
-                        .orElse(studioDto.toModel());
-                if (studio.getMovies() == null) {
-                    studio.setMovies(List.of(movie));
-                } else {
-                    studio.getMovies().add(movie);
-                }
-                return studioRepository.save(studio);
-            }).toList();
+            .map(studioDto -> studioService.upsertStudio(studioDto).addMovie(movie)).toList();
 
         movie.setProducers(producers);
         movie.setStudios(studios);
@@ -82,7 +71,7 @@ public class MovieService {
     }
 
     public List<Movie> importCsvToDatabase() throws MovieImportException {
-        List<MovieDto> movieDtos = fileService.getMoviesFromCsv();
+        List<MovieDto> movieDtos = fileService.getMoviesFromCsv(csvFilePath);
 
         List<Movie> movies = new ArrayList<>();
         movieDtos.forEach(movieDto -> movies.add(save(movieDto)));

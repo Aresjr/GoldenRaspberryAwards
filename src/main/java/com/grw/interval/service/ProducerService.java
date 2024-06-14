@@ -1,7 +1,9 @@
 package com.grw.interval.service;
 
 import com.grw.interval.dto.AwardIntervalsDto;
+import com.grw.interval.dto.ProducerDto;
 import com.grw.interval.dto.ProducerIntervalDto;
+import com.grw.interval.model.Producer;
 import com.grw.interval.repository.ProducerRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,11 @@ public class ProducerService {
 
     public ProducerService(ProducerRepository producerRepository) {
         this.producerRepository = producerRepository;
+    }
+
+    public Producer upsertProducer(ProducerDto producerDto) {
+        return producerRepository.getOneByName(producerDto.getName())
+                .orElseGet(() -> producerRepository.save(producerDto.toModel()));
     }
 
     public AwardIntervalsDto getAwardIntervals() {

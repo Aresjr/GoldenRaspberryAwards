@@ -11,5 +11,5 @@ public interface StudioRepository extends JpaRepository<Studio, Long> {
 
     void deleteById(Long id);
 
-    Optional<Studio> findByName(String name);
+    Optional<Studio> getOneByName(String name);
 }
