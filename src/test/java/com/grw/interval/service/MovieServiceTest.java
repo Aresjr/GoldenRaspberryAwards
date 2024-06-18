@@ -38,8 +38,8 @@ class MovieServiceTest {
 	void importCsvRecordsToDatabase() {
 		Assertions.assertDoesNotThrow(() -> movieService.importCsvToDatabase());
 
-		Assertions.assertEquals(206, movieRepository.count());
-		Assertions.assertEquals(59, studioRepository.count());
+		Assertions.assertEquals(209, movieRepository.count());
+		Assertions.assertEquals(62, studioRepository.count());
 		Assertions.assertEquals(359, producerRepository.count());
 		Assertions.assertEquals(19, studioRepository.getOneByName("20th Century Fox")
 				.orElseThrow(() -> new AssertionError("Studio not found")).getMovies().size());

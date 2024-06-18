@@ -6,6 +6,7 @@ import com.grw.interval.repository.ProducerRepository;
 import com.grw.interval.repository.StudioRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,8 +44,8 @@ class ProducerServiceTest {
 	void checkMinAndMaxWinningIntervals() {
 		Assertions.assertDoesNotThrow(() -> movieService.importCsvToDatabase());
 		AwardIntervalsDto awardIntervalsDto = producerService.getAwardIntervals();
-		Assertions.assertEquals(1, awardIntervalsDto.getMin().size());
-		Assertions.assertEquals(1, awardIntervalsDto.getMax().size());
+		Assertions.assertEquals(2, awardIntervalsDto.getMin().size());
+		Assertions.assertEquals(2, awardIntervalsDto.getMax().size());
 
 		ProducerIntervalDto minProducer = awardIntervalsDto.getMin().stream()
 				.filter(p -> p.getProducer().equals("Joel Silver")).findFirst()
@@ -54,15 +55,34 @@ class ProducerServiceTest {
 		Assertions.assertEquals(1991, minProducer.getFollowingWin());
 		Assertions.assertEquals(1, minProducer.getWinInterval());
 
-		ProducerIntervalDto maxProducer = awardIntervalsDto.getMax().stream()
+		ProducerIntervalDto minProducer2 = awardIntervalsDto.getMin().stream()
 				.filter(p -> p.getProducer().equals("Matthew Vaughn")).findFirst()
 				.orElseThrow(() -> new AssertionError("Producer not found"));
+		Assertions.assertEquals("Matthew Vaughn", minProducer2.getProducer());
+		Assertions.assertEquals(2002, minProducer2.getPreviousWin());
+		Assertions.assertEquals(2003, minProducer2.getFollowingWin());
+		Assertions.assertEquals(1, minProducer2.getWinInterval());
+
+		ProducerIntervalDto maxProducer = awardIntervalsDto.getMax().stream()
+				.filter(p -> p.getProducer().equals("Matthew Vaughn")
+						&& p.getFollowingWin().equals(2002)).findFirst()
+				.orElseThrow(() -> new AssertionError("Producer not found"));
 		Assertions.assertEquals("Matthew Vaughn", maxProducer.getProducer());
-		Assertions.assertEquals(2002, maxProducer.getPreviousWin());
-		Assertions.assertEquals(2015, maxProducer.getFollowingWin());
-		Assertions.assertEquals(13, maxProducer.getWinInterval());
+		Assertions.assertEquals(1980, maxProducer.getPreviousWin());
+		Assertions.assertEquals(2002, maxProducer.getFollowingWin());
+		Assertions.assertEquals(22, maxProducer.getWinInterval());
+
+		ProducerIntervalDto maxProducer2 = awardIntervalsDto.getMax().stream()
+				.filter(p -> p.getProducer().equals("Matthew Vaughn")
+						&& p.getFollowingWin().equals(2037)).findFirst()
+				.orElseThrow(() -> new AssertionError("Producer not found"));
+		Assertions.assertEquals("Matthew Vaughn", maxProducer2.getProducer());
+		Assertions.assertEquals(2015, maxProducer2.getPreviousWin());
+		Assertions.assertEquals(2037, maxProducer2.getFollowingWin());
+		Assertions.assertEquals(22, maxProducer2.getWinInterval());
 	}
 
+	@Disabled("Now it is covered by the test above (checkMinAndMaxWinningIntervals)")
 	@Test
 	void checkMinAndMaxWinningIntervalsMultipleProducers() {
 		Assertions.assertDoesNotThrow(() -> movieService.importCsvToDatabase());

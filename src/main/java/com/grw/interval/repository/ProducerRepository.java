@@ -19,7 +19,7 @@ public interface ProducerRepository extends JpaRepository<Producer, Long> {
     @Query(value = """
             WITH cte AS (
                 SELECT p.id as producer_id, p.name as Producer, m._year as _year,
-                RANK() OVER (PARTITION BY p.name ORDER BY _year) AS rn
+                LAG(_year) OVER (PARTITION BY p.name ORDER BY _year) previous_year
                 FROM MOVIE m
                 JOIN MOVIE_PRODUCER mp
                 ON mp.movie_id = m.id
@@ -29,16 +29,9 @@ public interface ProducerRepository extends JpaRepository<Producer, Long> {
                 ORDER BY p.name, _year
             )
 
-            select Producer, min(_year) as PreviousWin, max(_year) as FollowingWin, max(_year) - min(_year) as WinInterval
-            from (
-                select Producer, _year
-                from cte
-                where producer_id in (
-                    select producer_id
-                    from cte where rn > 1
-                )
-            )
-            group by Producer
+            select Producer, previous_year as PreviousWin, _year as FollowingWin,  _year - previous_year as WinInterval
+            from cte where previous_year is not null
+            group by Producer, _year
             order by WinInterval
             """, nativeQuery = true
     )

@@ -40,7 +40,7 @@ public class MovieController {
 
 	@ResponseStatus(HttpStatus.OK)
 	@GetMapping("movie/{id}")
-	public ResponseEntity<MovieDto> getMovieById(Long id) {
+	public ResponseEntity<MovieDto> getMovieById(@PathVariable Long id) {
 		MovieDto response = movieService.getMovieById(id).map(MovieDto::new)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found"));
 		return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -48,7 +48,7 @@ public class MovieController {
 
 	@ResponseStatus(HttpStatus.OK)
 	@DeleteMapping("movie/{id}")
-	public ResponseEntity<String> deleteMovieById(Long id) {
+	public ResponseEntity<String> deleteMovieById(@PathVariable Long id) {
 		MovieDto response = movieService.getMovieById(id).map(MovieDto::new)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found"));
 		movieService.deleteMovieById(id);
